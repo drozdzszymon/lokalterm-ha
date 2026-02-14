@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfiguracja LokalTerm",
+        "description": "Dodaj integrację LokalTerm i podaj dane urządzenia.",
+        "data": {
+          "name": "Nazwa (widoczna w Home Assistant)",
+          "devid": "ID urządzenia (vId)",
+          "devpin": "PIN urządzenia (vPin)",
+          "listen_host": "Adres nasłuchu",
+          "listen_port": "Port nasłuchu"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "To urządzenie jest już skonfigurowane."
+    }
+  }
+}

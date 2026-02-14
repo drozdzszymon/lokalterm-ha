@@ -1,0 +1,11 @@
+DOMAIN = "lokalterm"
+
+CONF_LISTEN_HOST = "listen_host"
+CONF_LISTEN_PORT = "listen_port"
+CONF_DEVID = "devid"
+CONF_DEVPIN = "devpin"
+
+DEFAULT_LISTEN_HOST = "0.0.0.0"
+DEFAULT_LISTEN_PORT = 1088
+
+BU_MODUL_TO_PERCENT = {0: 33, 1: 67, 2: 100}

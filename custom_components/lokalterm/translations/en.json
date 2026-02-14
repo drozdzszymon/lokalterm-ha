@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "LokalTerm setup",
+        "description": "Add the LokalTerm integration and provide your device details.",
+        "data": {
+          "name": "Name (shown in Home Assistant)",
+          "devid": "Device ID (vId)",
+          "devpin": "Device PIN (vPin)",
+          "listen_host": "Listen address",
+          "listen_port": "Listen port"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  }
+}
