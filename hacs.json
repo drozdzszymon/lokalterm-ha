@@ -1,6 +1,4 @@
 {
   "name": "LokalTerm",
-  "content_in_root": false,
-  "domains": ["lokalterm"],
-  "render_readme": true
+  "content_in_root": false
 }

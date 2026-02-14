@@ -1,16 +1,17 @@
 {
-  "domain": "lokalterm",
-  "name": "LokalTerm",
+  "config_flow": true,
   "codeowners": [
     "@drozdzszymon"
   ],
-  "config_flow": true,
   "documentation": "https://github.com/drozdzszymon/lokalterm-ha",
-  "iot_class": "local_push",
+  "domain": "lokalterm",
+  "integration_type": "device",
+  "iot_class": "local_polling",
   "issue_tracker": "https://github.com/drozdzszymon/lokalterm-ha/issues",
-  "loggers": [
-    "custom_components.lokalterm"
+  "name": "LokalTerm",
+  "requirements": [
+    "pyserial==3.5",
+    "pymodbus==3.7.4"
   ],
-  "requirements": [],
-  "version": "0.1.0"
+  "version": "0.0.1"
 }
