@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="images/icon.png" alt="LokalTerm" width="220">
+</p>
 # LokalTerm (Home Assistant) — `lokalterm-ha`
 
 Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie elektrycznym kotłem/sterownikiem Elterm (SKZP) poprzez **lokalny serwer** uruchamiany w Home Assistant. Urządzenie łączy się do HA i wysyła ramki statusu (push), a integracja pozwala sterować parametrami (temperatury, histerezy, tryby, moc) oraz udostępnia czujniki.
