@@ -1,3 +1,4 @@
 {
-  "name": "LokalTerm"
+  "name": "LokalTerm",
+  "content_in_root": false
 }
