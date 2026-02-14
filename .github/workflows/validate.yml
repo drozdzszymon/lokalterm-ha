@@ -1,11 +1,25 @@
+name: Validate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  validate-hacs:
-    if: ${{ github.event.repository.private == false }}
+  validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: HACS validation
         uses: hacs/action@main
         with:
           category: integration
-          ignore: brands
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Hassfest validation
+        uses: home-assistant/actions/hassfest@master
