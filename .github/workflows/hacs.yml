@@ -14,3 +14,4 @@ jobs:
         with:
           category: integration
           ignore: brands
+          comment: true

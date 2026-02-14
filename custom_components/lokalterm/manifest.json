@@ -1,12 +1,16 @@
 {
   "domain": "lokalterm",
   "name": "LokalTerm",
-  "codeowners": ["@drozdzszymon"],
+  "codeowners": [
+    "@drozdzszymon"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/drozdzszymon/lokalterm-ha",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/drozdzszymon/lokalterm-ha/issues",
-  "loggers": ["custom_components.lokalterm"],
+  "loggers": [
+    "custom_components.lokalterm"
+  ],
   "requirements": [],
   "version": "0.1.0"
 }

@@ -1,10 +1,12 @@
 # Python
 __pycache__/
 *.py[cod]
-
-# Virtual env
+*.pyo
+*.pyd
+*.egg-info/
 .venv/
 venv/
+.env
 
 # IDE
 .vscode/
