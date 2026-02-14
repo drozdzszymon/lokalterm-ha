@@ -261,10 +261,6 @@ PR-y mile widziane. Prośba: nie zmieniaj logiki sterowania “w ciemno” — i
 
 ## Licencja
 
-Wybierz licencję (np. MIT) i dodaj plik `LICENSE` w repozytorium.
+Repozytorium jest udostępniane na licencji **MIT** — szczegóły znajdują się w pliku `LICENSE`.
 
----
-
-## Zrzuty ekranu
-
-Dodaj screeny do katalogu `images/` i umieść je poniżej.
+Jeśli tworzysz fork lub dystrybucję, zachowaj informację o licencji oraz prawa autorskie zgodnie z warunkami MIT.
