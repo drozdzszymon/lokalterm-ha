@@ -65,7 +65,7 @@ Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w
 
 1. Ustaw **Serwer** na adres IP / nazwę hosta Home Assistanta w Twojej sieci LAN (**Serwer = HA**).
 2. Ustaw **Port** na **1088** (lub inny, jeśli zmieniłeś port nasłuchu w integracji).
-3. **Zapisz ustawienia na piecu** (i jeśli urządzenie tego wymaga — wykonaj restart).
+3. **Zapisz ustawienia na piecu**.
 
 > Upewnij się, że urządzenie ma trasę do HA i że firewall/VLAN nie blokuje połączenia TCP na wybrany port.
 
