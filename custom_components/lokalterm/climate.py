@@ -38,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class _BaseEltermClimate(CoordinatorEntity, ClimateEntity):
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_max_temp = 69.0
 
     def __init__(self, coordinator, server, devid: str, dev_name: str) -> None:
         super().__init__(coordinator)
