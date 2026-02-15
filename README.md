@@ -33,7 +33,6 @@ Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie
   - niskie opóźnienia sterowania
 - **Logi “produkcyjne”**
   - czytelne logi po polsku
-  - **maskowanie** pól wrażliwych (`vId`, `vPin`) w logach DEBUG/INFO
 
 ---
 
@@ -59,6 +58,16 @@ Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie
 ---
 
 ## Instalacja
+
+### Konfiguracja na urządzeniu (piec)
+
+Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w ustawieniach kotła/sterownika skonfiguruj połączenie z HA:
+
+1. Ustaw **Serwer** na adres IP / nazwę hosta Home Assistanta w Twojej sieci LAN (**Serwer = HA**).
+2. Ustaw **Port** na **1088** (lub inny, jeśli zmieniłeś port nasłuchu w integracji).
+3. **Zapisz ustawienia na piecu** (i jeśli urządzenie tego wymaga — wykonaj restart).
+
+> Upewnij się, że urządzenie ma trasę do HA i że firewall/VLAN nie blokuje połączenia TCP na wybrany port.
 
 ### A) Instalacja ręczna (Manual)
 
@@ -128,81 +137,6 @@ Podczas dodawania integracji pojawią się pola:
 
 ---
 
-## Rekomendowany panel sterowania (kolejność kontrolek)
-
-Home Assistant w widoku **Ustawienia → Urządzenia i usługi → Urządzenie → Controls** sortuje encje automatycznie (frontend) i integracja nie ma wspieranego mechanizmu, aby narzucić własną kolejność w tym miejscu.
-
-Aby uzyskać **czytelny i stabilny panel** z kontrolkami w preferowanej kolejności, dodaj kartę do dashboardu Lovelace.
-
-### Karta “Entities” (lista) – zalecana
-
-1. Dashboard → **Edytuj** → **Dodaj kartę** → **Entities** → przełącz na **YAML**
-2. Wklej:
-
-```yaml
-type: entities
-title: LokalTerm – Sterowanie
-show_header_toggle: false
-entities:
-  - entity: switch.lokalterm_co_enable
-    name: CO Włączone
-  - entity: select.lokalterm_co_moc
-    name: CO Moc maksymalna
-  - entity: number.lokalterm_co_temperatura_zadana
-    name: CO Temperatura
-  - entity: number.lokalterm_co_histereza
-    name: CO Histereza
-  - entity: number.lokalterm_cwu_temperatura_zadana
-    name: CWU Temperatura
-  - entity: number.lokalterm_cwu_histereza
-    name: CWU Histereza
-  - entity: select.lokalterm_cwu_tryb_pracy
-    name: CWU Tryb pracy
-  - entity: climate.lokalterm_termostat_co
-    name: Termostat CO
-  - entity: climate.lokalterm_termostat_cwu
-    name: Termostat CWU
-```
-
-### (Opcjonalnie) Kafelki “Tile” (nowoczesny wygląd)
-
-```yaml
-type: grid
-title: LokalTerm – Sterowanie
-columns: 2
-square: false
-cards:
-  - type: tile
-    entity: switch.lokalterm_co_enable
-    name: CO Włączone
-  - type: tile
-    entity: select.lokalterm_co_moc
-    name: CO Moc maksymalna
-  - type: tile
-    entity: number.lokalterm_co_temperatura_zadana
-    name: CO Temperatura
-  - type: tile
-    entity: number.lokalterm_co_histereza
-    name: CO Histereza
-  - type: tile
-    entity: number.lokalterm_cwu_temperatura_zadana
-    name: CWU Temperatura
-  - type: tile
-    entity: number.lokalterm_cwu_histereza
-    name: CWU Histereza
-  - type: tile
-    entity: select.lokalterm_cwu_tryb_pracy
-    name: CWU Tryb pracy
-  - type: tile
-    entity: climate.lokalterm_termostat_co
-    name: Termostat CO
-  - type: tile
-    entity: climate.lokalterm_termostat_cwu
-    name: Termostat CWU
-```
-
----
-
 ## Logowanie / debug
 
 ### Włączenie logów DEBUG tylko dla integracji
@@ -218,7 +152,7 @@ logger:
 
 Następnie zrestartuj Home Assistanta.
 
-> Integracja maskuje pola wrażliwe (`vId`, `vPin`) w logach, ale mimo to nie publikuj pełnych logów bez weryfikacji.
+> **Uwaga:** w logach DEBUG może pojawić się pełny payload zawierający `vId`/`vPin`. Przed publikacją logów usuń te dane.
 
 ---
 
