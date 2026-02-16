@@ -2,16 +2,31 @@
   <img src="images/icon.png" alt="LokalTerm" width="220">
 </p>
 
-# LokalTerm (Home Assistant) — `lokalterm-ha`
+<h1 align="center">
+  <img src="images/sections/puzzle.svg" width="28" align="center" alt="" />
+  LokalTerm — integracja dla Home Assistant
+</h1>
 
-Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie elektrycznym kotłem/sterownikiem Elterm (SKZP) poprzez **lokalny serwer** uruchamiany w Home Assistant. Urządzenie łączy się do HA i wysyła ramki statusu (push), a integracja pozwala sterować parametrami (temperatury, histerezy, tryby, moc) oraz udostępnia czujniki.
+<p align="center">
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/drozdzszymon/lokalterm-ha?style=for-the-badge">
+  </a>
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/commits/main">
+    <img alt="GitHub Activity" src="https://img.shields.io/github/commit-activity/y/drozdzszymon/lokalterm-ha?style=for-the-badge">
+  </a>
+  <a href="LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge">
+  </a>
+</p>
 
-> **Cel projektu:** stabilne, szybkie i przewidywalne sterowanie w sieci lokalnej, bez chmury.
+<p align="center">
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=drozdzszymon&repository=lokalterm-ha&category=integration">
+    <img alt="HACS" src="https://my.home-assistant.io/badges/hacs_repository.svg">
+  </a>
+</p>
 
 ---
-
-## Najważniejsze funkcje
-
+## <img src="images/sections/sparkles.svg" width="22" align="center" alt="" /> Najważniejsze funkcje
 - **Sterowanie CO**
   - włącz/wyłącz (tryb pracy CO)
   - ustawienie temperatury zadanej CO
@@ -36,8 +51,7 @@ Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie
 
 ---
 
-## Wymagania
-
+## <img src="images/sections/requirements.svg" width="22" align="center" alt="" /> Wymagania
 - Home Assistant (Core / Supervised / OS)
 - Sieć lokalna (LAN)
 - Możliwość zestawienia połączenia z urządzenia do Home Assistanta na wskazany port (domyślnie **1088**)
@@ -47,8 +61,7 @@ Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie
 
 ---
 
-## Środowisko testowe
-
+## <img src="images/sections/lab.svg" width="22" align="center" alt="" /> Środowisko testowe
 Integracja była weryfikowana w środowisku domowym na następującej konfiguracji:
 
 - **Moduł internetowy:** Elterm **WIZ108SR** (instrukcja: https://www.elterm.pl/fileadmin//user_upload/Elterm_instrukcja_modulu_internetowego_2022.pdf)
@@ -59,8 +72,7 @@ Integracja była weryfikowana w środowisku domowym na następującej konfigurac
 
 ---
 
-## Bezpieczeństwo
-
+## <img src="images/sections/shield.svg" width="22" align="center" alt="" /> Bezpieczeństwo
 - `vId` oraz `vPin` traktuj jak dane wrażliwe (nie publikuj w issue / screenshotach).
 - Integracja jest przeznaczona do pracy **w sieci lokalnej**.
 - Rekomendacje:
@@ -70,9 +82,8 @@ Integracja była weryfikowana w środowisku domowym na następującej konfigurac
 
 ---
 
-## Instalacja
-
-### Konfiguracja na urządzeniu (piec)
+## <img src="images/sections/wrench.svg" width="22" align="center" alt="" /> Instalacja
+### <img src="images/sections/server.svg" width="20" align="center" alt="" /> Konfiguracja na urządzeniu (piec)
 
 Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w ustawieniach kotła/sterownika skonfiguruj połączenie z HA:
 
@@ -107,8 +118,7 @@ Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w
 
 ---
 
-## Konfiguracja (UI)
-
+## <img src="images/sections/sliders.svg" width="22" align="center" alt="" /> Konfiguracja (UI)
 Podczas dodawania integracji pojawią się pola:
 
 - **Nazwa** – nazwa urządzenia w HA (domyślnie: `LokalTerm`)
@@ -121,8 +131,7 @@ Podczas dodawania integracji pojawią się pola:
 
 ---
 
-## Encje (przykładowe)
-
+## <img src="images/sections/devices.svg" width="22" align="center" alt="" /> Encje (przykładowe)
 ### Sterowanie (Switch / Select / Number)
 
 - `switch.lokalterm_co_enable` — **CO Włączone**
@@ -150,8 +159,7 @@ Podczas dodawania integracji pojawią się pola:
 
 ---
 
-## Logowanie / debug
-
+## <img src="images/sections/server.svg" width="22" align="center" alt="" /> Logowanie / debug
 ### Włączenie logów DEBUG tylko dla integracji
 
 W `configuration.yaml` dodaj:
@@ -169,8 +177,7 @@ Następnie zrestartuj Home Assistanta.
 
 ---
 
-## Rozwiązywanie problemów (Troubleshooting)
-
+## <img src="images/sections/bug.svg" width="22" align="center" alt="" /> Rozwiązywanie problemów (Troubleshooting)
 ### 1) Brak aktualizacji encji / encje stale “Unavailable”
 - Sprawdź czy urządzenie łączy się do HA na port nasłuchu (domyślnie 1088).
 - Sprawdź logi: **Ustawienia → System → Logi**.
@@ -187,15 +194,13 @@ Włącz DEBUG i sprawdź, czy pole jest obecne w danych statusu.
 
 ---
 
-## Języki (PL/EN)
-
+## <img src="images/sections/translate.svg" width="22" align="center" alt="" /> Języki (PL/EN)
 - UI konfiguracji (Config Flow) posiada tłumaczenia PL/EN (`translations/`).
 - Nazwy encji i logi są domyślnie w języku polskim.
 
 ---
 
-## Zgłaszanie błędów
-
+## <img src="images/sections/issue.svg" width="22" align="center" alt="" /> Zgłaszanie błędów
 Tworząc Issue, dołącz:
 - wersję Home Assistanta,
 - wersję integracji,
@@ -204,14 +209,12 @@ Tworząc Issue, dołącz:
 
 ---
 
-## Wkład (Contributing)
-
+## <img src="images/sections/handshake.svg" width="22" align="center" alt="" /> Wkład (Contributing)
 PR-y mile widziane. Prośba: nie zmieniaj logiki sterowania “w ciemno” — integracja jest wrażliwa na drobne zmiany. Najlepiej opisać zmianę, dodać logi i scenariusz testów.
 
 ---
 
-## Licencja
-
+## <img src="images/sections/scale.svg" width="22" align="center" alt="" /> Licencja
 Repozytorium jest udostępniane na licencji **MIT** — szczegóły znajdują się w pliku `LICENSE`.
 
 Jeśli tworzysz fork lub dystrybucję, zachowaj informację o licencji oraz prawa autorskie zgodnie z warunkami MIT.
