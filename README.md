@@ -8,22 +8,17 @@
 </h1>
 
 <p align="center">
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/drozdzszymon/lokalterm-ha?style=for-the-badge">
-  </a>
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/commits/main">
-    <img alt="GitHub Activity" src="https://img.shields.io/github/commit-activity/y/drozdzszymon/lokalterm-ha?style=for-the-badge">
-  </a>
-  <a href="LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge">
-  </a>
+  <img alt="Release" src="https://img.shields.io/badge/Release-ready-2ea44f?style=for-the-badge&logo=github">
+  <img alt="HACS" src="https://img.shields.io/badge/HACS-custom-8250df?style=for-the-badge&logo=homeassistant">
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-0a84ff?style=for-the-badge">
 </p>
 
 <p align="center">
-  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=drozdzszymon&repository=lokalterm-ha&category=integration">
-    <img alt="HACS" src="https://my.home-assistant.io/badges/hacs_repository.svg">
-  </a>
+  <sub>
+    Po opublikowaniu repozytorium możesz podmienić badge na dynamiczne (Release/Activity/License) z wykorzystaniem ścieżki <code>OWNER/REPO</code>.
+  </sub>
 </p>
+
 
 ---
 ## <img src="images/sections/sparkles.svg" width="22" align="center" alt="" /> Najważniejsze funkcje
