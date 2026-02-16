@@ -11,17 +11,8 @@
   <a href="https://github.com/drozdzszymon/lokalterm-ha/releases/latest">
     <img alt="Release" src="https://img.shields.io/github/v/release/drozdzszymon/lokalterm-ha?style=for-the-badge&logo=github">
   </a>
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">
-    <img alt="Downloads" src="https://img.shields.io/github/downloads/drozdzszymon/lokalterm-ha/total?style=for-the-badge">
-  </a>
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/commits/main">
-    <img alt="Last commit" src="https://img.shields.io/github/last-commit/drozdzszymon/lokalterm-ha?style=for-the-badge">
-  </a>
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/drozdzszymon/lokalterm-ha?style=for-the-badge">
-  </a>
   <a href="LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge">
+    <img alt="License" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge&label=license">
   </a>
 </p>
 
@@ -34,8 +25,8 @@
 <p align="center">
   <b>Skróty:</b>
   <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">Releases</a> ·
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/issues">Issues</a> ·
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/blob/main/README.md">Dokumentacja</a>
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/blob/main/README.md">Dokumentacja</a> ·
+  <a href="LICENSE">License</a>
 </p>
 
 ---
