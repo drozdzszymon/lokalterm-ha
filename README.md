@@ -44,6 +44,19 @@ Integracja **LokalTerm** dla Home Assistanta umożliwia lokalne (LAN) sterowanie
 
 > **Uwaga:** Integracja uruchamia w HA lokalny serwer TCP. Jeśli HA działa w kontenerze, musisz zadbać o to, aby urządzenie mogło połączyć się z adresem HA i portem nasłuchu.
 
+
+---
+
+## Środowisko testowe
+
+Integracja była weryfikowana w środowisku domowym na następującej konfiguracji:
+
+- **Moduł internetowy:** Elterm **WIZ108SR** (instrukcja: https://www.elterm.pl/fileadmin//user_upload/Elterm_instrukcja_modulu_internetowego_2022.pdf)
+- **Kocioł elektryczny:** Elterm **Pułkownik (AsZN‑W)** (produkt: https://www.elterm.pl/produkty/elektryczne-kotly-grzewcze-seria-zaawansowana-lcd/elektryczny-kociol-grzewczy-pulkownik)
+
+> Uwaga: inne modele/konfiguracje mogą mieć inny zestaw pól w ramkach statusu (np. dodatkowe/nieobecne klucze).
+
+
 ---
 
 ## Bezpieczeństwo
@@ -65,7 +78,7 @@ Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w
 
 1. Ustaw **Serwer** na adres IP / nazwę hosta Home Assistanta w Twojej sieci LAN (**Serwer = HA**).
 2. Ustaw **Port** na **1088** (lub inny, jeśli zmieniłeś port nasłuchu w integracji).
-3. **Zapisz ustawienia na piecu**.
+3. **Zapisz ustawienia na piecu** (i jeśli urządzenie tego wymaga — wykonaj restart).
 
 > Upewnij się, że urządzenie ma trasę do HA i że firewall/VLAN nie blokuje połączenia TCP na wybrany port.
 
