@@ -8,17 +8,35 @@
 </h1>
 
 <p align="center">
-  <img alt="Release" src="https://img.shields.io/badge/Release-ready-2ea44f?style=for-the-badge&logo=github">
-  <img alt="HACS" src="https://img.shields.io/badge/HACS-custom-8250df?style=for-the-badge&logo=homeassistant">
-  <img alt="License" src="https://img.shields.io/badge/License-MIT-0a84ff?style=for-the-badge">
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases/latest">
+    <img alt="Release" src="https://img.shields.io/github/v/release/drozdzszymon/lokalterm-ha?style=for-the-badge&logo=github">
+  </a>
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">
+    <img alt="Downloads" src="https://img.shields.io/github/downloads/drozdzszymon/lokalterm-ha/total?style=for-the-badge">
+  </a>
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/commits/main">
+    <img alt="Last commit" src="https://img.shields.io/github/last-commit/drozdzszymon/lokalterm-ha?style=for-the-badge">
+  </a>
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/drozdzszymon/lokalterm-ha?style=for-the-badge">
+  </a>
+  <a href="LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge">
+  </a>
 </p>
 
 <p align="center">
-  <sub>
-    Po opublikowaniu repozytorium możesz podmienić badge na dynamiczne (Release/Activity/License) z wykorzystaniem ścieżki <code>OWNER/REPO</code>.
-  </sub>
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=drozdzszymon&repository=lokalterm-ha&category=integration">
+    <img alt="Add to HACS" src="https://my.home-assistant.io/badges/hacs_repository.svg">
+  </a>
 </p>
 
+<p align="center">
+  <b>Skróty:</b>
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">Releases</a> ·
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/issues">Issues</a> ·
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/blob/main/README.md">Dokumentacja</a>
+</p>
 
 ---
 ## <img src="images/sections/sparkles.svg" width="22" align="center" alt="" /> Najważniejsze funkcje
