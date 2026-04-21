@@ -10,7 +10,7 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/drozdzszymon/lokalterm-ha/issues",
   "requirements": [
-    "pymodbus==3.7.4",
+    "pymodbus",
     "pyserial==3.5"
   ],
   "version": "1.0.0"
