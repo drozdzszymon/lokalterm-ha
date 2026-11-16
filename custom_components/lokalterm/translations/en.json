@@ -3,18 +3,58 @@
     "step": {
       "user": {
         "title": "LokalTerm setup",
-        "description": "Add the LokalTerm integration and provide your device details.",
+        "description": "Add the LokalTerm integration and enter your local boiler connection details.",
         "data": {
           "name": "Name (shown in Home Assistant)",
           "devid": "Device ID (vId)",
           "devpin": "Device PIN (vPin)",
           "listen_host": "Listen address",
           "listen_port": "Listen port"
+        },
+        "data_description": {
+          "name": "Friendly device name shown on dashboard cards and in the device registry.",
+          "devid": "Controller/module identifier required in command frames.",
+          "devpin": "Device PIN used to authorize local LAN control frames.",
+          "listen_host": "TCP server bind address in Home Assistant (default 0.0.0.0).",
+          "listen_port": "TCP port receiving boiler status frames (default 1088, range 1-65535)."
         }
       }
     },
+    "error": {
+      "empty_devid": "Enter a valid device ID (vId).",
+      "empty_devpin": "Enter a valid device PIN (vPin).",
+      "invalid_host": "Enter a valid IP address or hostname.",
+      "invalid_port": "Port must be an integer between 1 and 65535.",
+      "port_in_use": "This port is already used by another LokalTerm entry.",
+      "cannot_bind": "Cannot bind to the selected TCP address or port (already in use or insufficient permissions)."
+    },
     "abort": {
       "already_configured": "This device is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "LokalTerm connection settings",
+        "description": "Update TCP server settings or device PIN. Saving reloads the integration automatically.",
+        "data": {
+          "devpin": "Device PIN (vPin)",
+          "listen_host": "Listen address",
+          "listen_port": "Listen port"
+        },
+        "data_description": {
+          "devpin": "Device PIN used to authorize local LAN control frames.",
+          "listen_host": "TCP server bind address in Home Assistant (default 0.0.0.0).",
+          "listen_port": "TCP listen port (default 1088, range 1-65535)."
+        }
+      }
+    },
+    "error": {
+      "empty_devpin": "Enter a valid device PIN (vPin).",
+      "invalid_host": "Enter a valid IP address or hostname.",
+      "invalid_port": "Port must be an integer between 1 and 65535.",
+      "port_in_use": "This port is already used by another LokalTerm entry.",
+      "cannot_bind": "Cannot bind to the selected TCP address or port (already in use or insufficient permissions)."
     }
   }
 }

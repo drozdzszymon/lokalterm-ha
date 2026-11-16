@@ -127,11 +127,12 @@ Podczas dodawania integracji pojawią się pola:
 
 - **Nazwa** – nazwa urządzenia w HA (domyślnie: `LokalTerm`)
 - **ID urządzenia (vId)**
-- **PIN urządzenia (vPin)**
+- **PIN urządzenia (vPin)** *(pole maskowane)*
 - **Adres nasłuchu** (domyślnie: `0.0.0.0`)
 - **Port nasłuchu** (domyślnie: `1088`)
 
-> `Adres nasłuchu` i `Port nasłuchu` to parametry serwera TCP uruchamianego w Home Assistant.
+> `Adres nasłuchu` i `Port nasłuchu` to parametry serwera TCP uruchamianego w Home Assistant.  
+> Po dodaniu integracji możesz w dowolnym momencie zmienić PIN, adres lub port przez przycisk **Konfiguruj** na karcie integracji (bez usuwania urządzenia i historii encji).
 
 ---
 

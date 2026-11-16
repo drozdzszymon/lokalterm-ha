@@ -3,18 +3,58 @@
     "step": {
       "user": {
         "title": "Konfiguracja LokalTerm",
-        "description": "Dodaj integrację LokalTerm i podaj dane urządzenia.",
+        "description": "Dodaj integrację LokalTerm i podaj dane lokalnego połączenia z kotłem.",
         "data": {
           "name": "Nazwa (widoczna w Home Assistant)",
           "devid": "ID urządzenia (vId)",
           "devpin": "PIN urządzenia (vPin)",
           "listen_host": "Adres nasłuchu",
           "listen_port": "Port nasłuchu"
+        },
+        "data_description": {
+          "name": "Przyjazna nazwa urządzenia wyświetlana na kartach i liście urządzeń.",
+          "devid": "Identyfikator modułu/kotła wymagany w ramkach sterujących.",
+          "devpin": "Kod PIN urządzenia używany do autoryzacji komend w sieci LAN.",
+          "listen_host": "Adres interfejsu serwera TCP w Home Assistant (domyślnie 0.0.0.0).",
+          "listen_port": "Port TCP, na który moduł pieca wysyła ramki statusu (domyślnie 1088, zakres 1-65535)."
         }
       }
     },
+    "error": {
+      "empty_devid": "Podaj prawidłowy identyfikator urządzenia (vId).",
+      "empty_devpin": "Podaj prawidłowy kod PIN urządzenia (vPin).",
+      "invalid_host": "Podaj prawidłowy adres IP lub nazwę hosta.",
+      "invalid_port": "Port musi być liczbą całkowitą z zakresu 1-65535.",
+      "port_in_use": "Wybrany port jest już używany przez inną konfigurację LokalTerm.",
+      "cannot_bind": "Nie można otworzyć wybranego adresu lub portu TCP (zajęty lub brak uprawnień)."
+    },
     "abort": {
       "already_configured": "To urządzenie jest już skonfigurowane."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ustawienia połączenia LokalTerm",
+        "description": "Zmień parametry serwera TCP lub PIN urządzenia. Po zapisaniu integracja przeładuje się automatycznie.",
+        "data": {
+          "devpin": "PIN urządzenia (vPin)",
+          "listen_host": "Adres nasłuchu",
+          "listen_port": "Port nasłuchu"
+        },
+        "data_description": {
+          "devpin": "Kod PIN urządzenia używany do autoryzacji komend w sieci LAN.",
+          "listen_host": "Adres interfejsu serwera TCP w Home Assistant (domyślnie 0.0.0.0).",
+          "listen_port": "Port TCP nasłuchu (domyślnie 1088, zakres 1-65535)."
+        }
+      }
+    },
+    "error": {
+      "empty_devpin": "Podaj prawidłowy kod PIN urządzenia (vPin).",
+      "invalid_host": "Podaj prawidłowy adres IP lub nazwę hosta.",
+      "invalid_port": "Port musi być liczbą całkowitą z zakresu 1-65535.",
+      "port_in_use": "Wybrany port jest już używany przez inną konfigurację LokalTerm.",
+      "cannot_bind": "Nie można otworzyć wybranego adresu lub portu TCP (zajęty lub brak uprawnień)."
     }
   }
 }

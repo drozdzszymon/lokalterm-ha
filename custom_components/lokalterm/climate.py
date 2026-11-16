@@ -1,32 +1,36 @@
 from __future__ import annotations
-from typing import Any
 
-from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode
+from typing import Any, ClassVar
+
+from homeassistant.components.climate import (
+    ATTR_HVAC_MODE,
+    ClimateEntity,
+    ClimateEntityFeature,
+    HVACMode,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
-
+from .const import (
+    CO_MAX_TEMP,
+    CO_MIN_TEMP,
+    CWU_MAX_TEMP,
+    CWU_MIN_TEMP,
+    DOMAIN,
+)
+from .entity import EltermEntity, temp_to_wire, to_temp_celsius
 
 PRESET_NORMALNY = "Normalny"
 PRESET_PRIORYTET = "Priorytet"
 
 
-def _to_temp(value: Any) -> float | None:
-    try:
-        return int(value) / 100.0 if value is not None else None
-    except Exception:
-        return None
-
-
-def _temp_to_wire(value_c: float) -> str:
-    return str(int(round(value_c * 100)))
-
-
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     data = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         [
@@ -36,30 +40,32 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     )
 
 
-class _BaseEltermClimate(CoordinatorEntity, ClimateEntity):
+class _BaseEltermClimate(EltermEntity, ClimateEntity):
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_max_temp = 69.0
+    _attr_target_temperature_step = 1.0
+    _enable_turn_on_off_backwards_compatibility = False
 
     def __init__(self, coordinator, server, devid: str, dev_name: str) -> None:
-        super().__init__(coordinator)
+        super().__init__(coordinator, devid, dev_name)
         self._server = server
-        self._devid = devid
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, devid)},
-            "name": dev_name,
-            "manufacturer": "Elterm",
-            "model": "SKZP (serwer lokalny)",
-        }
 
-    @property
-    def available(self) -> bool:
-        return self.coordinator.data is not None
+    async def async_turn_on(self) -> None:
+        await self.async_set_hvac_mode(HVACMode.HEAT)
+
+    async def async_turn_off(self) -> None:
+        await self.async_set_hvac_mode(HVACMode.OFF)
 
 
 class EltermCoClimate(_BaseEltermClimate):
     _attr_name = "Termostat CO"
-    _attr_hvac_modes = [HVACMode.HEAT, HVACMode.OFF]
-    _attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
+    _attr_min_temp = CO_MIN_TEMP
+    _attr_max_temp = CO_MAX_TEMP
+    _attr_hvac_modes: ClassVar[list[HVACMode]] = [HVACMode.HEAT, HVACMode.OFF]
+    _attr_supported_features = (
+        ClimateEntityFeature.TARGET_TEMPERATURE
+        | ClimateEntityFeature.TURN_ON
+        | ClimateEntityFeature.TURN_OFF
+    )
 
     def __init__(self, coordinator, server, devid: str, dev_name: str) -> None:
         super().__init__(coordinator, server, devid, dev_name)
@@ -68,76 +74,126 @@ class EltermCoClimate(_BaseEltermClimate):
 
     @property
     def current_temperature(self) -> float | None:
-        return _to_temp((self.coordinator.data or {}).get("BoilerTempAct"))
+        return to_temp_celsius((self.coordinator.data or {}).get("BoilerTempAct"))
 
     @property
     def target_temperature(self) -> float | None:
-        return _to_temp((self.coordinator.data or {}).get("BoilerTempCmd"))
+        return to_temp_celsius((self.coordinator.data or {}).get("BoilerTempCmd"))
 
     @property
     def hvac_mode(self) -> HVACMode | None:
         mode = (self.coordinator.data or {}).get("CH1Mode")
-        return HVACMode.OFF if mode == "Stop" else HVACMode.HEAT
+        if mode is None:
+            return None
+        return HVACMode.OFF if str(mode) == "Stop" else HVACMode.HEAT
 
-    async def async_set_temperature(self, **kwargs) -> None:
-        temp = kwargs.get("temperature")
-        if temp is None:
-            return
-        await self._server.send_data_to_send({"BoilerTempCmd": _temp_to_wire(float(temp))})
+    async def async_set_temperature(self, **kwargs: Any) -> None:
+        fields: dict[str, str] = {}
+        hvac_mode = kwargs.get(ATTR_HVAC_MODE)
+        if hvac_mode in self._attr_hvac_modes:
+            fields["CH1Mode"] = "Stop" if hvac_mode == HVACMode.OFF else "Still_On"
+
+        temp = kwargs.get(ATTR_TEMPERATURE)
+        if temp is not None:
+            fields["BoilerTempCmd"] = temp_to_wire(
+                float(temp),
+                min_val=CO_MIN_TEMP,
+                max_val=CO_MAX_TEMP,
+            )
+
+        if fields:
+            await self._server.send_data_to_send(fields)
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
+        if hvac_mode not in self._attr_hvac_modes:
+            return
         mode = "Stop" if hvac_mode == HVACMode.OFF else "Still_On"
         await self._server.send_data_to_send({"CH1Mode": mode})
 
 
 class EltermCwuClimate(_BaseEltermClimate):
     _attr_name = "Termostat CWU"
-    _attr_hvac_modes = [HVACMode.HEAT, HVACMode.OFF]
-    _attr_preset_modes = [PRESET_NORMALNY, PRESET_PRIORYTET]
-    _attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
+    _attr_min_temp = CWU_MIN_TEMP
+    _attr_max_temp = CWU_MAX_TEMP
+    _attr_hvac_modes: ClassVar[list[HVACMode]] = [HVACMode.HEAT, HVACMode.OFF]
+    _attr_preset_modes: ClassVar[list[str]] = [PRESET_NORMALNY, PRESET_PRIORYTET]
+    _attr_supported_features = (
+        ClimateEntityFeature.TARGET_TEMPERATURE
+        | ClimateEntityFeature.PRESET_MODE
+        | ClimateEntityFeature.TURN_ON
+        | ClimateEntityFeature.TURN_OFF
+    )
 
     def __init__(self, coordinator, server, devid: str, dev_name: str) -> None:
         super().__init__(coordinator, server, devid, dev_name)
         self._attr_suggested_object_id = "lokalterm_termostat_cwu"
         self._attr_unique_id = f"{devid}_climate_cwu"
+        self._last_active_preset: str = PRESET_NORMALNY
 
     @property
     def current_temperature(self) -> float | None:
-        return _to_temp((self.coordinator.data or {}).get("DHWTempAct"))
+        return to_temp_celsius((self.coordinator.data or {}).get("DHWTempAct"))
 
     @property
     def target_temperature(self) -> float | None:
-        return _to_temp((self.coordinator.data or {}).get("DHWTempCmd"))
+        return to_temp_celsius((self.coordinator.data or {}).get("DHWTempCmd"))
 
     @property
     def hvac_mode(self) -> HVACMode | None:
         mode = (self.coordinator.data or {}).get("DHWMode")
-        return HVACMode.OFF if mode == "Stop" else HVACMode.HEAT
+        if mode is None:
+            return None
+        return HVACMode.OFF if str(mode) == "Stop" else HVACMode.HEAT
 
     @property
     def preset_mode(self) -> str | None:
         mode = (self.coordinator.data or {}).get("DHWMode")
-        if mode == "Priority":
+        if mode is None:
+            return None
+        mode_s = str(mode)
+        if mode_s == "Priority":
+            self._last_active_preset = PRESET_PRIORYTET
             return PRESET_PRIORYTET
-        return PRESET_NORMALNY
+        if mode_s == "Still_On":
+            self._last_active_preset = PRESET_NORMALNY
+            return PRESET_NORMALNY
+        return self._last_active_preset
 
-    async def async_set_temperature(self, **kwargs) -> None:
-        temp = kwargs.get("temperature")
-        if temp is None:
-            return
-        await self._server.send_data_to_send({"DHWTempCmd": _temp_to_wire(float(temp))})
+    async def async_set_temperature(self, **kwargs: Any) -> None:
+        fields: dict[str, str] = {}
+        hvac_mode = kwargs.get(ATTR_HVAC_MODE)
+        if hvac_mode in self._attr_hvac_modes:
+            if hvac_mode == HVACMode.OFF:
+                fields["DHWMode"] = "Stop"
+            else:
+                preset = self.preset_mode or self._last_active_preset
+                fields["DHWMode"] = "Priority" if preset == PRESET_PRIORYTET else "Still_On"
+
+        temp = kwargs.get(ATTR_TEMPERATURE)
+        if temp is not None:
+            fields["DHWTempCmd"] = temp_to_wire(
+                float(temp),
+                min_val=CWU_MIN_TEMP,
+                max_val=CWU_MAX_TEMP,
+            )
+
+        if fields:
+            await self._server.send_data_to_send(fields)
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
+        if hvac_mode not in self._attr_hvac_modes:
+            return
         if hvac_mode == HVACMode.OFF:
             await self._server.send_data_to_send({"DHWMode": "Stop"})
             return
 
-        current_preset = self.preset_mode or PRESET_NORMALNY
+        current_preset = self.preset_mode or self._last_active_preset
         mode = "Priority" if current_preset == PRESET_PRIORYTET else "Still_On"
         await self._server.send_data_to_send({"DHWMode": mode})
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         if preset_mode not in self._attr_preset_modes:
             return
+        self._last_active_preset = preset_mode
         mode = "Priority" if preset_mode == PRESET_PRIORYTET else "Still_On"
         await self._server.send_data_to_send({"DHWMode": mode})
