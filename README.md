@@ -9,10 +9,10 @@
 
 <p align="center">
   <a href="https://github.com/drozdzszymon/lokalterm-ha/releases/latest">
-    <img alt="Release" src="https://img.shields.io/github/v/release/drozdzszymon/lokalterm-ha?style=for-the-badge&logo=github">
+    <img alt="Najnowsze wydanie" src="https://img.shields.io/github/v/release/drozdzszymon/lokalterm-ha?style=for-the-badge&logo=github&label=Wydanie">
   </a>
   <a href="LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge&label=license">
+    <img alt="Licencja" src="https://img.shields.io/github/license/drozdzszymon/lokalterm-ha?style=for-the-badge&label=Licencja">
   </a>
 </p>
 
@@ -24,9 +24,9 @@
 
 <p align="center">
   <b>Skróty:</b>
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">Releases</a> ·
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">Wydania</a> ·
   <a href="https://github.com/drozdzszymon/lokalterm-ha/blob/main/README.md">Dokumentacja</a> ·
-  <a href="LICENSE">License</a>
+  <a href="LICENSE">Licencja</a>
 </p>
 
 ---
@@ -73,6 +73,12 @@ Integracja była weryfikowana w środowisku domowym na następującej konfigurac
 
 > Uwaga: inne modele/konfiguracje mogą mieć inny zestaw pól w ramkach statusu (np. dodatkowe/nieobecne klucze).
 
+### Sterownik TIMEL SKZP-05
+
+W [zgłoszeniu #1](https://github.com/drozdzszymon/lokalterm-ha/issues/1) potwierdzono działanie podstawowych encji SKZP-05. Obsługa trzech obiegów grzewczych, bufora i palnika pelletowego nie została jednak zweryfikowana. Do jej rozszerzenia potrzebna jest potwierdzona mapa pól protokołu albo zanonimizowane ramki z tego sterownika. Nie należy zakładać, że pola lub skale wartości są identyczne jak w kotle Elterm.
+
+Sposób przygotowania danych opisano w sekcji „Dane potrzebne do rozszerzenia obsługi SKZP-05” poniżej.
+
 
 ---
 
@@ -97,7 +103,7 @@ Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w
 
 > Upewnij się, że urządzenie ma trasę do HA i że firewall/VLAN nie blokuje połączenia TCP na wybrany port.
 
-### A) Instalacja ręczna (Manual)
+### A) Instalacja ręczna
 
 1. Skopiuj katalog `custom_components/lokalterm/` do:
    ```
@@ -107,7 +113,7 @@ Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w
 3. Przejdź do: **Ustawienia → Urządzenia i usługi → Dodaj integrację → LokalTerm**
 4. Uzupełnij konfigurację.
 
-### B) HACS (Custom Repository)
+### B) HACS (repozytorium niestandardowe)
 
 > Ten projekt jest przygotowany pod HACS jako repozytorium niestandardowe.
 
@@ -133,6 +139,16 @@ Podczas dodawania integracji pojawią się pola:
 
 > `Adres nasłuchu` i `Port nasłuchu` to parametry serwera TCP uruchamianego w Home Assistant.  
 > Po dodaniu integracji możesz w dowolnym momencie zmienić PIN, adres lub port przez przycisk **Konfiguruj** na karcie integracji (bez usuwania urządzenia i historii encji).
+
+### Zakresy temperatur
+
+Obecne zakresy nastaw, wspólne dla termostatów i encji liczbowych, wynoszą:
+
+- **CO:** 20–69°C,
+- **CWU:** 30–69°C,
+- **histereza CO/CWU:** 0–6°C.
+
+Są to ograniczenia integracji, a nie deklaracja dopuszczalnych temperatur każdego kotła. Nie podnosimy ich automatycznie do 80°C: zakres trzeba potwierdzić dla konkretnego modelu i wersji oprogramowania. Przykładowo [producent testowanego Pułkownika](https://www.elterm.pl/produkty/elektryczne-kotly-grzewcze-seria-zaawansowana-lcd/elektryczny-kociol-grzewczy-pulkownik) podaje elektroniczną nastawę 5–70°C. Obsługę innych zakresów śledzimy w [zgłoszeniu #4](https://github.com/drozdzszymon/lokalterm-ha/issues/4); nie należy w tym celu omijać zabezpieczeń kotła.
 
 ---
 
@@ -164,7 +180,7 @@ Podczas dodawania integracji pojawią się pola:
 
 ---
 
-## <img src="images/sections/server.svg" width="22" align="center" alt="" /> Logowanie / debug
+## <img src="images/sections/server.svg" width="22" align="center" alt="" /> Logi i diagnostyka
 ### Włączenie logów DEBUG tylko dla integracji
 
 W `configuration.yaml` dodaj:
@@ -178,11 +194,22 @@ logger:
 
 Następnie zrestartuj Home Assistanta.
 
-> **Uwaga:** w logach DEBUG może pojawić się pełny payload zawierający `vId`/`vPin`. Przed publikacją logów usuń te dane.
+> **Uwaga:** integracja maskuje pola `vId` i `vPin` w logowanych ramkach statusu. Przed udostępnieniem logów nadal sprawdź je i usuń pozostałe identyfikatory oraz dane sieciowe. Surowe przechwyty ruchu z Wiresharka mogą zawierać niezamaskowane dane uwierzytelniające.
+
+### Dane potrzebne do rozszerzenia obsługi SKZP-05
+
+1. Zapisz model sterownika, wersję oprogramowania oraz model modułu internetowego.
+2. Najpierw zbierz ramki statusu z logów integracji. Jeśli nie wystarczą, przechwyć wyłącznie ruch własnego sterownika i aplikacji producenta w sieci lokalnej. Wireshark musi działać na komputerze uczestniczącym w połączeniu albo mieć dostęp do odpowiednio skonfigurowanego portu lustrzanego przełącznika.
+3. Ogranicz przechwytywanie do adresu sterownika, np. filtrem wyświetlania `ip.addr == ADRES_IP_STEROWNIKA`. Zapisz status wyjściowy, a następnie zmieniaj w aplikacji tylko jeden parametr naraz, wyłącznie w zakresie dopuszczonym przez producenta.
+4. Dla każdej próbki opisz obieg lub funkcję, wartość przed zmianą i po niej, jednostkę oraz wskazanie na panelu sterownika. Potrzebne są osobne próbki dla dodatkowych obiegów, bufora i palnika.
+5. Z funkcji Wiresharka **Podążaj → Strumień TCP** wyeksportuj potrzebny tekst i przed publikacją zastąp `vId`, `vPin`, `vToken`, adresy IP/MAC i inne identyfikatory stałymi znacznikami. Zachowaj nazwy pól i wartości pomiarowe. **Nie publikuj surowego pliku PCAP ani danych logowania.**
+6. Jeżeli połączenie jest szyfrowane lub aplikacja korzysta z chmury, taki przechwyt nie musi ujawniać pól protokołu. Wtedy potrzebna będzie dokumentacja lokalnego interfejsu od producenta; nie należy wyłączać zabezpieczeń.
+
+Oficjalna mapa protokołu udostępniona przez producenta może zastąpić przechwytywanie ruchu. Nowe pola powinny najpierw zostać zweryfikowane jako odczyty; komendy sterujące wymagają dodatkowo potwierdzenia ich znaczenia i zakresów.
 
 ---
 
-## <img src="images/sections/bug.svg" width="22" align="center" alt="" /> Rozwiązywanie problemów (Troubleshooting)
+## <img src="images/sections/bug.svg" width="22" align="center" alt="" /> Rozwiązywanie problemów
 ### 1) Brak aktualizacji encji / encje stale “Unavailable”
 - Sprawdź czy urządzenie łączy się do HA na port nasłuchu (domyślnie 1088).
 - Sprawdź logi: **Ustawienia → System → Logi**.
@@ -196,6 +223,19 @@ Następnie zrestartuj Home Assistanta.
 ### 3) “Unknown” na sensorach temperatury
 Najczęstsza przyczyna: urządzenie nie wysyła danego pola w ramce statusu (np. `DHWTempAct`).  
 Włącz DEBUG i sprawdź, czy pole jest obecne w danych statusu.
+
+### 4) Błąd 500 przy dodawaniu integracji
+
+Problem opisany w [zgłoszeniu #2](https://github.com/drozdzszymon/lokalterm-ha/issues/2) dotyczył konfliktu zależności w starszym wydaniu. W **1.1.0** usunięto nieużywane zależności `pymodbus` i `pyserial`.
+
+- Zaktualizuj integrację w HACS do **1.1.0 lub nowszej** i zrestartuj Home Assistanta.
+- Przy instalacji ręcznej zastąp cały katalog integracji plikami z aktualnego wydania.
+- Nie wymuszaj starszej wersji `pymodbus` w kontenerze Home Assistanta — może to uszkodzić zgodność innych integracji.
+- Jeśli błąd nadal występuje, dołącz pełny ślad wyjątku z logów po usunięciu danych wrażliwych oraz wersje HA i integracji. Sam komunikat HTTP 500 nie wskazuje jednoznacznie przyczyny.
+
+### 5) Czujnik CWU niewidoczny przy tworzeniu termostatu
+
+Od **1.1.0** czujniki temperatury CO i CWU mają klasę urządzenia `temperature`, klasę stanu `measurement` i jednostkę °C. Rozwiązuje to brak metadanych opisany w [zgłoszeniu #3](https://github.com/drozdzszymon/lokalterm-ha/issues/3). Po aktualizacji zrestartuj HA i wybierz encję temperatury CWU, a nie encję jej nastawy.
 
 ---
 
@@ -214,8 +254,14 @@ Tworząc Issue, dołącz:
 
 ---
 
-## <img src="images/sections/handshake.svg" width="22" align="center" alt="" /> Wkład (Contributing)
+## <img src="images/sections/handshake.svg" width="22" align="center" alt="" /> Rozwój projektu
 PR-y mile widziane. Prośba: nie zmieniaj logiki sterowania “w ciemno” — integracja jest wrażliwa na drobne zmiany. Najlepiej opisać zmianę, dodać logi i scenariusz testów.
+
+### Testy regresji
+
+Uruchom `python -m pytest -q`. Testy korzystają z uproszczonego środowiska Home Assistanta zdefiniowanego w `tests/conftest.py`; sprawdzają także komunikację TCP na lokalnych gniazdach.
+
+Automatyczna walidacja w GitHub Actions uruchamia testy regresji, HACS i hassfest oraz osobno import wszystkich platform i budowę formularzy na rzeczywistym pakiecie **Home Assistant 2026.4.3**. Nie zastępuje to testów sprzętowych ani pełnego uruchomienia integracji w HA.
 
 ---
 

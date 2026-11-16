@@ -15,7 +15,7 @@ from homeassistant.components.climate import (
 )
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_TEMPERATURE
+from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import AbortFlow, ConfigEntryNotReady
 from homeassistant.helpers.selector import TextSelector, TextSelectorType
@@ -471,6 +471,7 @@ async def test_all_entities_states_ha2026_features_and_edge_cases() -> None:
     cwu_clim = by_uid["SKZP_99_climate_cwu"]
     sw = by_uid["SKZP_99_co_enable"]
     temp_co_sensor = by_uid["SKZP_99_temp_wody_co"]
+    temp_cwu_sensor = by_uid["SKZP_99_temp_wody_cwu"]
     energy_sensor = by_uid["SKZP_99_energia_licznik_kwh"]
     co_num = by_uid["SKZP_99_co_temperatura_zadana"]
     cwu_sel = by_uid["SKZP_99_cwu_tryb_pracy"]
@@ -484,9 +485,10 @@ async def test_all_entities_states_ha2026_features_and_edge_cases() -> None:
     assert co_clim._attr_min_temp == 20.0
     assert cwu_clim._attr_min_temp == 30.0
 
-    # Sensor device_class & state_class for long-term statistics
-    assert temp_co_sensor.entity_description.device_class == SensorDeviceClass.TEMPERATURE
-    assert temp_co_sensor.entity_description.state_class == SensorStateClass.MEASUREMENT
+    for sensor in (temp_co_sensor, temp_cwu_sensor):
+        assert sensor.entity_description.device_class == SensorDeviceClass.TEMPERATURE
+        assert sensor.entity_description.state_class == SensorStateClass.MEASUREMENT
+        assert sensor.entity_description.native_unit_of_measurement == UnitOfTemperature.CELSIUS
 
     coord = hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
@@ -514,6 +516,8 @@ async def test_all_entities_states_ha2026_features_and_edge_cases() -> None:
     )
     assert cwu_clim.preset_mode == PRESET_PRIORYTET
     assert cwu_clim.hvac_mode == HVACMode.HEAT
+    assert temp_co_sensor.native_value == 42.5
+    assert temp_cwu_sensor.native_value == 48.0
     assert energy_sensor.native_value == 152.35
     assert cwu_sel.current_option == "PRIORYTET"
 
