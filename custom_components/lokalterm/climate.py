@@ -24,6 +24,7 @@ from .entity import EltermEntity, temp_to_wire, to_temp_celsius
 
 PRESET_NORMALNY = "Normalny"
 PRESET_PRIORYTET = "Priorytet"
+_HAS_NATIVE_TEMPERATURE_API = hasattr(ClimateEntity, "native_temperature_unit")
 
 
 async def async_setup_entry(
@@ -41,7 +42,9 @@ async def async_setup_entry(
 
 
 class _BaseEltermClimate(EltermEntity, ClimateEntity):
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
+    if not _HAS_NATIVE_TEMPERATURE_API:
+        _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_target_temperature_step = 1.0
     _enable_turn_on_off_backwards_compatibility = False
 
@@ -73,12 +76,16 @@ class EltermCoClimate(_BaseEltermClimate):
         self._attr_unique_id = f"{devid}_climate"
 
     @property
-    def current_temperature(self) -> float | None:
+    def native_current_temperature(self) -> float | None:
         return to_temp_celsius((self.coordinator.data or {}).get("BoilerTempAct"))
 
     @property
-    def target_temperature(self) -> float | None:
+    def native_target_temperature(self) -> float | None:
         return to_temp_celsius((self.coordinator.data or {}).get("BoilerTempCmd"))
+
+    if not _HAS_NATIVE_TEMPERATURE_API:
+        current_temperature = native_current_temperature
+        target_temperature = native_target_temperature
 
     @property
     def hvac_mode(self) -> HVACMode | None:
@@ -131,12 +138,16 @@ class EltermCwuClimate(_BaseEltermClimate):
         self._last_active_preset: str = PRESET_NORMALNY
 
     @property
-    def current_temperature(self) -> float | None:
+    def native_current_temperature(self) -> float | None:
         return to_temp_celsius((self.coordinator.data or {}).get("DHWTempAct"))
 
     @property
-    def target_temperature(self) -> float | None:
+    def native_target_temperature(self) -> float | None:
         return to_temp_celsius((self.coordinator.data or {}).get("DHWTempCmd"))
+
+    if not _HAS_NATIVE_TEMPERATURE_API:
+        current_temperature = native_current_temperature
+        target_temperature = native_target_temperature
 
     @property
     def hvac_mode(self) -> HVACMode | None:

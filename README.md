@@ -4,7 +4,7 @@
 
 <h1 align="center">
   <img src="images/sections/puzzle.svg" width="28" align="center" alt="" />
-  LokalTerm — integracja dla Home Assistant
+  LokalTerm dla Home Assistanta
 </h1>
 
 <p align="center">
@@ -23,167 +23,89 @@
 </p>
 
 <p align="center">
-  <b>Skróty:</b>
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">Wydania</a> ·
-  <a href="https://github.com/drozdzszymon/lokalterm-ha/blob/main/README.md">Dokumentacja</a> ·
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/releases">Wydania</a> |
+  <a href="https://github.com/drozdzszymon/lokalterm-ha/issues">Zgłoszenia</a> |
   <a href="LICENSE">Licencja</a>
 </p>
 
----
-## <img src="images/sections/sparkles.svg" width="22" align="center" alt="" /> Najważniejsze funkcje
-- **Sterowanie CO**
-  - włącz/wyłącz (tryb pracy CO)
-  - ustawienie temperatury zadanej CO
-  - histereza CO
-  - moc maksymalna (33/67/100)
-- **Sterowanie CWU**
-  - tryb pracy CWU: Włączony / STOP / PRIORYTET
-  - ustawienie temperatury zadanej CWU
-  - histereza CWU
-- **Termostaty (Climate)**
-  - **Termostat CO** (OFF/HEAT + temperatura)
-  - **Termostat CWU** (OFF/HEAT + temperatura + preset: **Normalny/Priorytet**)
-- **Sensory**
-  - status pieca (%)
-  - temperatura wody CO / CWU (°C)
-  - energia – licznik (kWh) *(jeśli dostępne w ramkach urządzenia)*
-- **Integracja lokalna**
-  - urządzenie wysyła status do Home Assistanta (push)
-  - niskie opóźnienia sterowania
-- **Logi “produkcyjne”**
-  - czytelne logi po polsku
+LokalTerm łączy kocioł elektryczny Elterm lub sterownik z rodziny SKZP bezpośrednio z Home Assistantem w sieci domowej, bez chmury producenta i bez zewnętrznych kont. Integracja otwiera w Home Assistancie lokalny serwer TCP (domyślnie na porcie 1088), na który moduł internetowy pieca sam wysyła ramki statusu i z którego odbiera polecenia zmiany temperatury oraz trybu pracy. Po kliknięciu na karcie encja odświeża stan od razu, a przy awarii dostępu do internetu ogrzewaniem nadal sterujesz z lokalnej sieci.
 
----
+## <img src="images/sections/sparkles.svg" width="22" align="center" alt="" /> Co potrafi integracja w codziennej pracy
 
-## <img src="images/sections/requirements.svg" width="22" align="center" alt="" /> Wymagania
-- Home Assistant (Core / Supervised / OS)
-- Sieć lokalna (LAN)
-- Możliwość zestawienia połączenia z urządzenia do Home Assistanta na wskazany port (domyślnie **1088**)
+W obiegu centralnego ogrzewania włączysz i zatrzymasz grzanie, ustawisz temperaturę zadaną, dopasujesz histerezę i ograniczysz moc grzałek do 33%, 67% albo 100%. Dla ciepłej wody użytkowej zmienisz temperaturę zadaną, histerezę oraz tryb pracy między normalnym dogrzewaniem, zatrzymaniem a priorytetem CWU. Obok pojedynczych suwaków i przełączników dostajesz dwa termostaty (`Termostat CO` oraz `Termostat CWU`), przy czym termostat CWU pamięta ostatnio wybrany preset (`Normalny` albo `Priorytet`) po wyłączeniu i ponownym włączeniu.
 
-> **Uwaga:** Integracja uruchamia w HA lokalny serwer TCP. Jeśli HA działa w kontenerze, musisz zadbać o to, aby urządzenie mogło połączyć się z adresem HA i portem nasłuchu.
+Z ramek statusu integracja odczytuje bieżące wysterowanie mocy kotła w procentach, rzeczywistą temperaturę wody CO i CWU ze statystykami długoterminowymi Home Assistanta oraz narastający licznik zużytej energii w kWh, o ile sterownik przesyła pole `P033`. Serwer skleja szybkie przesunięcia suwaka temperatury po 100 ms w jedną komendę `DataToSend`, żeby nie zapychać magistrali RS-485 serią pośrednich nastaw. Różne parametry wychodzą w osobnych jednoparametrowych ramkach co 150 ms. Jeżeli kocioł nie potwierdzi nowej wartości w kolejnych ramkach w ciągu 20 s, interfejs wraca do rzeczywistego odczytu ze sterownika i zapisuje czytelne ostrzeżenie po polsku w logach.
 
+## <img src="images/sections/requirements.svg" width="22" align="center" alt="" /> Wymagania w sieci domowej
 
----
+Home Assistant oraz moduł internetowy kotła muszą mieć łączność TCP w sieci lokalnej na wybranym porcie nasłuchu, domyślnie 1088. Połączenie zestawia sam kocioł w stronę Home Assistanta. Przy uruchomieniu Home Assistanta w kontenerze Dockera wystaw port 1088 na hosta albo uruchom kontener w trybie sieci `host`, bo przy izolowanej sieci mostkowanej pakiety z kotłowni nie dotrą do serwera integracji.
 
-## <img src="images/sections/lab.svg" width="22" align="center" alt="" /> Środowisko testowe
-Integracja była weryfikowana w środowisku domowym na następującej konfiguracji:
+## <img src="images/sections/lab.svg" width="22" align="center" alt="" /> Przetestowane kotły i sterowniki
 
-- **Moduł internetowy:** Elterm **WIZ108SR** (instrukcja: https://www.elterm.pl/fileadmin//user_upload/Elterm_instrukcja_modulu_internetowego_2022.pdf)
-- **Kocioł elektryczny:** Elterm **Pułkownik (AsZN‑W)** (produkt: https://www.elterm.pl/produkty/elektryczne-kotly-grzewcze-seria-zaawansowana-lcd/elektryczny-kociol-grzewczy-pulkownik)
-
-> Uwaga: inne modele/konfiguracje mogą mieć inny zestaw pól w ramkach statusu (np. dodatkowe/nieobecne klucze).
+Integracja pracuje z elektrycznym kotłem [Elterm Pułkownik AsZN-W](https://www.elterm.pl/produkty/elektryczne-kotly-grzewcze-seria-zaawansowana-lcd/elektryczny-kociol-grzewczy-pulkownik) wyposażonym w moduł internetowy WIZ108SR, którego konfigurację sieciową opisuje [instrukcja modułu internetowego Elterm](https://www.elterm.pl/fileadmin//user_upload/Elterm_instrukcja_modulu_internetowego_2022.pdf). Inne modele kotłów oraz odmienne wersje oprogramowania mogą pomijać część pól w ramkach `SkzpData` albo wysyłać dodatkowe rejestry.
 
 ### Sterownik TIMEL SKZP-05
 
-W [zgłoszeniu #1](https://github.com/drozdzszymon/lokalterm-ha/issues/1) potwierdzono działanie podstawowych encji SKZP-05. Obsługa trzech obiegów grzewczych, bufora i palnika pelletowego nie została jednak zweryfikowana. Do jej rozszerzenia potrzebna jest potwierdzona mapa pól protokołu albo zanonimizowane ramki z tego sterownika. Nie należy zakładać, że pola lub skale wartości są identyczne jak w kotle Elterm.
+W [zgłoszeniu #1](https://github.com/drozdzszymon/lokalterm-ha/issues/1) użytkownicy potwierdzili działanie podstawowych encji ze sterownikiem TIMEL SKZP-05. Obsługa trzech dodatkowych obiegów grzewczych, bufora ciepła i palnika pelletowego wymaga zweryfikowanej mapy pól protokołu albo zanonimizowanych ramek z żywego urządzenia. Zbieżność nazwy rodziny sterowników nie daje pewności, że rejestry i mnożniki temperatur pokrywają się z kotłem elektrycznym Elterm. Instrukcję zebrania próbek znajdziesz niżej w sekcji diagnostycznej.
 
-Sposób przygotowania danych opisano w sekcji „Dane potrzebne do rozszerzenia obsługi SKZP-05” poniżej.
+## <img src="images/sections/shield.svg" width="22" align="center" alt="" /> Ochrona dostępu w sieci LAN
 
+Protokół SKZP przesyła identyfikator `vId` oraz kod `vPin` otwartym tekstem w ramkach TCP. Nie wystawiaj portu nasłuchu (1088) na publiczny internet przez przekierowanie portów na routerze. Przypisz modułowi kotła stałą dzierżawę DHCP i w regułach zapory sieciowej albo osobnego VLAN-u dopuść ruch na port 1088 wyłącznie z adresu IP pieca. Przed wklejeniem logów lub zrzutów ekranu do zgłoszenia upewnij się, że nie widać w nich wartości `vId`, `vPin` ani wewnętrznych adresów sieciowych.
 
----
+## <img src="images/sections/wrench.svg" width="22" align="center" alt="" /> Instalacja i podłączenie pieca
 
-## <img src="images/sections/shield.svg" width="22" align="center" alt="" /> Bezpieczeństwo
-- `vId` oraz `vPin` traktuj jak dane wrażliwe (nie publikuj w issue / screenshotach).
-- Integracja jest przeznaczona do pracy **w sieci lokalnej**.
-- Rekomendacje:
-  - nie wystawiaj portu nasłuchu na Internet,
-  - ogranicz ruch (VLAN / firewall) tylko do urządzenia,
-  - jeśli to możliwe, użyj stałych adresów IP w LAN.
+### <img src="images/sections/server.svg" width="20" align="center" alt="" /> Ustawienie adresu Home Assistanta w kotle
 
----
+Zanim dodasz integrację w panelu Home Assistanta, przestaw docelowy serwer w ustawieniach kotła lub modułu WIZ108SR. Po zapisaniu zmian moduł przestanie wysyłać dane do dotychczasowego serwera zdalnego.
 
-## <img src="images/sections/wrench.svg" width="22" align="center" alt="" /> Instalacja
-### <img src="images/sections/server.svg" width="20" align="center" alt="" /> Konfiguracja na urządzeniu (piec)
+1. Wpisz jako adres serwera stały adres IP albo nazwę hosta Home Assistanta w sieci lokalnej.
+2. Ustaw port docelowy na `1088` (albo inny numer, który wybierzesz w konfiguracji integracji).
+3. Zapisz ustawienia na panelu pieca i uruchom ponownie moduł internetowy, jeśli sam nie zestawi nowego połączenia TCP.
 
-Aby urządzenie mogło wysyłać status i odbierać komendy z Home Assistanta, w ustawieniach kotła/sterownika skonfiguruj połączenie z HA:
+### Instalacja z HACS
 
-1. Ustaw **Serwer** na adres IP / nazwę hosta Home Assistanta w Twojej sieci LAN (**Serwer = HA**).
-2. Ustaw **Port** na **1088** (lub inny, jeśli zmieniłeś port nasłuchu w integracji).
-3. **Zapisz ustawienia na piecu** (i jeśli urządzenie tego wymaga — wykonaj restart).
+Repozytorium dodasz do HACS jako niestandardowe źródło integracji.
 
-> Upewnij się, że urządzenie ma trasę do HA i że firewall/VLAN nie blokuje połączenia TCP na wybrany port.
+1. Otwórz HACS w Home Assistancie, rozwiń menu w prawym górnym rogu i wybierz niestandardowe repozytoria.
+2. Wklej adres `https://github.com/drozdzszymon/lokalterm-ha` i wybierz kategorię `Integration`.
+3. Pobierz integrację LokalTerm z listy i uruchom ponownie Home Assistanta.
+4. Wejdź w Ustawienia, otwórz Urządzenia i usługi, kliknij dodawanie integracji i wyszukaj LokalTerm. Po zatwierdzeniu formularza na liście urządzeń pojawi się nowy kocioł z trzynastoma encjami.
 
-### A) Instalacja ręczna
+### Instalacja ręczna
 
-1. Skopiuj katalog `custom_components/lokalterm/` do:
-   ```
-   /config/custom_components/lokalterm/
-   ```
-2. Zrestartuj Home Assistanta.
-3. Przejdź do: **Ustawienia → Urządzenia i usługi → Dodaj integrację → LokalTerm**
-4. Uzupełnij konfigurację.
+Skopiuj folder `custom_components/lokalterm` do katalogu `/config/custom_components/lokalterm` w swojej instalacji Home Assistanta i zrestartuj system. Po ponownym uruchomieniu dodaj LokalTerm w menu Urządzenia i usługi tak samo jak w wariancie z HACS.
 
-### B) HACS (repozytorium niestandardowe)
+## <img src="images/sections/sliders.svg" width="22" align="center" alt="" /> Formularz konfiguracji i granice temperatur
 
-> Ten projekt jest przygotowany pod HACS jako repozytorium niestandardowe.
+Podczas dodawania integracji wpisujesz nazwę urządzenia widoczną na kartach (domyślnie `LokalTerm`), identyfikator `vId` oraz maskowany kod `vPin`. Możesz też zmienić adres interfejsu serwera TCP (domyślnie `0.0.0.0`, czyli wszystkie interfejsy sieciowe hosta) oraz numer portu TCP (domyślnie `1088`). Jeśli później zmienisz PIN na kotle albo przeniesiesz serwer na inny port, kliknij `Konfiguruj` na karcie integracji. Nowe parametry zapiszą się od ręki bez kasowania urządzenia i historii pomiarów.
 
-1. Otwórz HACS → **Integrations**
-2. Menu (⋮) → **Custom repositories**
-3. Dodaj repo:
-   - Repository: `https://github.com/drozdzszymon/lokalterm-ha`
-   - Category: **Integration**
-4. Zainstaluj integrację z HACS.
-5. Zrestartuj Home Assistanta.
-6. Dodaj integrację w UI (jak wyżej).
+### Zakresy nastaw temperatur
 
----
+Termostaty i encje liczbowe przyjmują dla obiegu CO temperatury od 20 do 69°C, dla ciepłej wody użytkowej od 30 do 69°C, a dla histerezy CO i CWU wartości od 0 do 6°C z krokiem co 1°C. Limity te odpowiadają skali przetestowanego sterownika i blokują wysyłanie nastaw spoza bezpiecznego przedziału. W [opisie technicznym kotła Elterm Pułkownik](https://www.elterm.pl/produkty/elektryczne-kotly-grzewcze-seria-zaawansowana-lcd/elektryczny-kociol-grzewczy-pulkownik) producent deklaruje nastawę elektroniczną od 5 do 70°C. Część innych sterowników pozwala ustawić na fizycznym panelu 80°C, dlatego obsługę szerszych widełek zależnie od modelu i wersji oprogramowania prowadzimy w [zgłoszeniu #4](https://github.com/drozdzszymon/lokalterm-ha/issues/4). Nie podnoś tych granic w kodzie na ślepo bez potwierdzenia dopuszczalnych nastaw w dokumentacji własnego kotła.
 
-## <img src="images/sections/sliders.svg" width="22" align="center" alt="" /> Konfiguracja (UI)
-Podczas dodawania integracji pojawią się pola:
+## <img src="images/sections/devices.svg" width="22" align="center" alt="" /> Tworzone encje w Home Assistancie
 
-- **Nazwa** – nazwa urządzenia w HA (domyślnie: `LokalTerm`)
-- **ID urządzenia (vId)**
-- **PIN urządzenia (vPin)** *(pole maskowane)*
-- **Adres nasłuchu** (domyślnie: `0.0.0.0`)
-- **Port nasłuchu** (domyślnie: `1088`)
+| Platforma | Domyślne `entity_id` | Działanie encji |
+| --- | --- | --- |
+| `climate` | `climate.lokalterm_termostat_co` | Termostat obiegu CO z trybami grzania i wyłączenia oraz nastawą od 20 do 69°C |
+| `climate` | `climate.lokalterm_termostat_cwu` | Termostat CWU z nastawą od 30 do 69°C oraz presetami `Normalny` i `Priorytet` |
+| `switch` | `switch.lokalterm_co_enable` | Włącznik obiegu grzewczego CO przełączający pole `CH1Mode` między `Still_On` a `Stop` |
+| `select` | `select.lokalterm_co_moc` | Wybór maksymalnej mocy grzałek kotła między 33%, 67% a 100% |
+| `select` | `select.lokalterm_cwu_tryb_pracy` | Wybór trybu CWU między opcjami `Włączony`, `STOP` oraz `PRIORYTET` |
+| `number` | `number.lokalterm_co_temperatura_zadana` | Nastawa temperatury wody CO od 20 do 69°C |
+| `number` | `number.lokalterm_co_histereza` | Nastawa histerezy obiegu CO od 0 do 6°C |
+| `number` | `number.lokalterm_cwu_temperatura_zadana` | Nastawa temperatury wody CWU od 30 do 69°C |
+| `number` | `number.lokalterm_cwu_histereza` | Nastawa histerezy CWU od 0 do 6°C |
+| `sensor` | `sensor.lokalterm_status_pieca` | Aktualne wysterowanie mocy kotła w procentach |
+| `sensor` | `sensor.lokalterm_temp_wody_co` | Bieżąca temperatura wody w obiegu CO w °C |
+| `sensor` | `sensor.lokalterm_temp_wody_cwu` | Bieżąca temperatura wody użytkowej CWU w °C |
+| `sensor` | `sensor.lokalterm_energia_licznik_kwh` | Licznik zużytej energii w kWh z pola `P033` (aktywny, gdy piec wysyła to pole) |
 
-> `Adres nasłuchu` i `Port nasłuchu` to parametry serwera TCP uruchamianego w Home Assistant.  
-> Po dodaniu integracji możesz w dowolnym momencie zmienić PIN, adres lub port przez przycisk **Konfiguruj** na karcie integracji (bez usuwania urządzenia i historii encji).
+Dopóki serwer TCP nie odbierze pierwszej ramki `SkzpData`, wszystkie encje pozostają niedostępne. Przy ponownym dodawaniu urządzenia albo ręcznej zmianie nazw Home Assistant może nadać inne identyfikatory `entity_id`, które sprawdzisz w zakładce Encje po wpisaniu `lokalterm`.
 
-### Zakresy temperatur
+## <img src="images/sections/server.svg" width="22" align="center" alt="" /> Logi diagnostyczne i zbieranie ramek
 
-Obecne zakresy nastaw, wspólne dla termostatów i encji liczbowych, wynoszą:
-
-- **CO:** 20–69°C,
-- **CWU:** 30–69°C,
-- **histereza CO/CWU:** 0–6°C.
-
-Są to ograniczenia integracji, a nie deklaracja dopuszczalnych temperatur każdego kotła. Nie podnosimy ich automatycznie do 80°C: zakres trzeba potwierdzić dla konkretnego modelu i wersji oprogramowania. Przykładowo [producent testowanego Pułkownika](https://www.elterm.pl/produkty/elektryczne-kotly-grzewcze-seria-zaawansowana-lcd/elektryczny-kociol-grzewczy-pulkownik) podaje elektroniczną nastawę 5–70°C. Obsługę innych zakresów śledzimy w [zgłoszeniu #4](https://github.com/drozdzszymon/lokalterm-ha/issues/4); nie należy w tym celu omijać zabezpieczeń kotła.
-
----
-
-## <img src="images/sections/devices.svg" width="22" align="center" alt="" /> Encje (przykładowe)
-### Sterowanie (Switch / Select / Number)
-
-- `switch.lokalterm_co_enable` — **CO Włączone**
-- `select.lokalterm_co_moc` — **CO Moc maksymalna**
-- `number.lokalterm_co_temperatura_zadana` — **CO Temperatura**
-- `number.lokalterm_co_histereza` — **CO Histereza**
-- `number.lokalterm_cwu_temperatura_zadana` — **CWU Temperatura**
-- `number.lokalterm_cwu_histereza` — **CWU Histereza**
-- `select.lokalterm_cwu_tryb_pracy` — **CWU Tryb pracy**
-
-### Termostaty (Climate)
-
-- `climate.lokalterm_termostat_co` — **Termostat CO**
-- `climate.lokalterm_termostat_cwu` — **Termostat CWU** (preset: Normalny/Priorytet)
-
-### Sensory (Sensor)
-
-- `sensor.lokalterm_status_pieca` — **Status pieca**
-- `sensor.lokalterm_temp_wody_co` — **Temperatura wody CO**
-- `sensor.lokalterm_temp_wody_cwu` — **Temperatura wody CWU**
-- `sensor.lokalterm_energia_licznik_kwh` — **Energia - licznik (kWh)** *(jeśli dostępne)*
-
-> **Uwaga:** `entity_id` mogą się różnić, jeśli Home Assistant nadał je wcześniej lub jeśli były zmieniane ręcznie.  
-> Zawsze sprawdzisz je w: **Ustawienia → Urządzenia i usługi → Encje** (wyszukaj `lokalterm`).
-
----
-
-## <img src="images/sections/server.svg" width="22" align="center" alt="" /> Logi i diagnostyka
-### Włączenie logów DEBUG tylko dla integracji
-
-W `configuration.yaml` dodaj:
+Szczegółowy podgląd odbieranych i wysyłanych ramek włączysz dla samego komponentu LokalTerm w pliku `configuration.yaml`.
 
 ```yaml
 logger:
@@ -192,80 +114,57 @@ logger:
     custom_components.lokalterm: debug
 ```
 
-Następnie zrestartuj Home Assistanta.
-
-> **Uwaga:** integracja maskuje pola `vId` i `vPin` w logowanych ramkach statusu. Przed udostępnieniem logów nadal sprawdź je i usuń pozostałe identyfikatory oraz dane sieciowe. Surowe przechwyty ruchu z Wiresharka mogą zawierać niezamaskowane dane uwierzytelniające.
+Po dopisaniu tej sekcji zrestartuj Home Assistanta. Integracja maskuje w logach pola `vId` oraz `vPin` gwiazdkami, ale przed udostępnieniem wycinka w sieci usuń też pozostałe identyfikatory i prywatne adresy IP. Surowy zapis ruchu z Wiresharka zawiera pełne, niezamaskowane dane uwierzytelniające.
 
 ### Dane potrzebne do rozszerzenia obsługi SKZP-05
 
-1. Zapisz model sterownika, wersję oprogramowania oraz model modułu internetowego.
-2. Najpierw zbierz ramki statusu z logów integracji. Jeśli nie wystarczą, przechwyć wyłącznie ruch własnego sterownika i aplikacji producenta w sieci lokalnej. Wireshark musi działać na komputerze uczestniczącym w połączeniu albo mieć dostęp do odpowiednio skonfigurowanego portu lustrzanego przełącznika.
-3. Ogranicz przechwytywanie do adresu sterownika, np. filtrem wyświetlania `ip.addr == ADRES_IP_STEROWNIKA`. Zapisz status wyjściowy, a następnie zmieniaj w aplikacji tylko jeden parametr naraz, wyłącznie w zakresie dopuszczonym przez producenta.
-4. Dla każdej próbki opisz obieg lub funkcję, wartość przed zmianą i po niej, jednostkę oraz wskazanie na panelu sterownika. Potrzebne są osobne próbki dla dodatkowych obiegów, bufora i palnika.
-5. Z funkcji Wiresharka **Podążaj → Strumień TCP** wyeksportuj potrzebny tekst i przed publikacją zastąp `vId`, `vPin`, `vToken`, adresy IP/MAC i inne identyfikatory stałymi znacznikami. Zachowaj nazwy pól i wartości pomiarowe. **Nie publikuj surowego pliku PCAP ani danych logowania.**
-6. Jeżeli połączenie jest szyfrowane lub aplikacja korzysta z chmury, taki przechwyt nie musi ujawniać pól protokołu. Wtedy potrzebna będzie dokumentacja lokalnego interfejsu od producenta; nie należy wyłączać zabezpieczeń.
+Oficjalna mapa lokalnego protokołu od producenta wystarcza w zupełności i zwalnia z nagrywania ruchu sieciowego. Gdy producent nie udostępnia opisu ramek, próbki zbierzesz z własnego sterownika w sieci domowej.
 
-Oficjalna mapa protokołu udostępniona przez producenta może zastąpić przechwytywanie ruchu. Nowe pola powinny najpierw zostać zweryfikowane jako odczyty; komendy sterujące wymagają dodatkowo potwierdzenia ich znaczenia i zakresów.
+1. Zapisz dokładny model sterownika, wersję jego oprogramowania oraz typ modułu internetowego.
+2. Sprawdź najpierw ramki `SkzpData` widoczne w logach `debug` integracji. Gdy brakuje tam szukanych obiegów lub komend, nagraj ruch wyłącznie między własnym sterownikiem a aplikacją producenta w sieci lokalnej. Wireshark musi działać na komputerze uczestniczącym w komunikacji albo czytać ruch z portu lustrzanego przełącznika.
+3. Zawęź widok w Wiresharku filtrem `ip.addr == ADRES_IP_STEROWNIKA`. Zapisz ramkę stanu spoczynkowego, a potem zmieniaj w aplikacji producenta po jednym parametrze naraz w granicach dopuszczonych dla danego kotła.
+4. Przy każdej próbce zanotuj badany obieg lub palnik, wartość przed zmianą i po niej, jednostkę oraz równoczesne wskazanie na ekranie sterownika. Przygotuj oddzielne próbki dla dodatkowych obiegów, bufora i palnika pelletowego.
+5. Wyeksportuj tekst rozmowy w Wiresharku funkcją śledzenia strumienia TCP i przed wysłaniem podmień `vId`, `vPin`, `vToken` oraz adresy IP i MAC na stałe znaczniki zastępcze. Nie wrzucaj do zgłoszenia surowego pliku PCAP. Nazwy kluczy JSON i wartości pomiarowe zostaw bez zmian.
+6. Gdy aplikacja łączy się wyłącznie przez szyfrowaną chmurę, zrzut pakietów nie pokaże zawartości ramek. W takiej sytuacji pozostaje prośba do producenta o specyfikację lokalnego protokołu bez wyłączania szyfrowania na urządzeniu.
 
----
+Nowe klucze trafiają najpierw do integracji jako bezpieczne czujniki tylko do odczytu. Zapis nastaw dokładamy dopiero po jednoznacznym potwierdzeniu skali i znaczenia pola sterującego.
 
-## <img src="images/sections/bug.svg" width="22" align="center" alt="" /> Rozwiązywanie problemów
-### 1) Brak aktualizacji encji / encje stale “Unavailable”
-- Sprawdź czy urządzenie łączy się do HA na port nasłuchu (domyślnie 1088).
-- Sprawdź logi: **Ustawienia → System → Logi**.
-- Upewnij się, że adres HA jest osiągalny z urządzenia (routing/VLAN/firewall).
+## <img src="images/sections/bug.svg" width="22" align="center" alt="" /> Najczęstsze usterki po instalacji
 
-### 2) Nie można sterować (klikam w UI, ale urządzenie nie reaguje)
-- Integracja wysyła komendy natychmiast, a potwierdzenie przychodzi w kolejnych ramkach statusu.
-- Jeśli urządzenie nie potwierdzi zmian w określonym czasie, w logach pojawi się ostrzeżenie o timeout.
-- Sprawdź, czy urządzenie nie ma ograniczeń co do częstotliwości zmian (bardzo szybkie klikanie w UI).
+### Encje cały czas widnieją jako niedostępne
 
-### 3) “Unknown” na sensorach temperatury
-Najczęstsza przyczyna: urządzenie nie wysyła danego pola w ramce statusu (np. `DHWTempAct`).  
-Włącz DEBUG i sprawdź, czy pole jest obecne w danych statusu.
+Moduł internetowy pieca nie dociera z połączeniem TCP na port nasłuchu Home Assistanta (domyślnie 1088). Sprawdź w menu kotła wpisany adres IP serwera, zweryfikuj reguły zapory między podsieciami lub VLAN-ami i zajrzyj do logów systemowych Home Assistanta, gdzie każde podłączenie pieca zostawia wpis informacyjny z adresem źródłowym.
 
-### 4) Błąd 500 przy dodawaniu integracji
+### Kocioł nie reaguje na zmianę nastawy z panelu
 
-Problem opisany w [zgłoszeniu #2](https://github.com/drozdzszymon/lokalterm-ha/issues/2) dotyczył konfliktu zależności w starszym wydaniu. W **1.1.0** usunięto nieużywane zależności `pymodbus` i `pyserial`.
+Integracja wysyła ramkę `DataToSend` po 100 ms od kliknięcia i czeka maksymalnie 20 s na potwierdzenie nowej wartości w przychodzącej ramce `SkzpData`. Jeżeli po 20 s suwak wraca na dawną pozycję, a w logach pojawia się ostrzeżenie o przekroczeniu czasu oczekiwania, sprawdź zgodność wpisanego `vId` oraz kodu `vPin` z ustawieniami na panelu sterownika. Sam sterownik kotła potrafi też pominąć zbyt gęstą serię ręcznych kliknięć.
 
-- Zaktualizuj integrację w HACS do **1.1.0 lub nowszej** i zrestartuj Home Assistanta.
-- Przy instalacji ręcznej zastąp cały katalog integracji plikami z aktualnego wydania.
-- Nie wymuszaj starszej wersji `pymodbus` w kontenerze Home Assistanta — może to uszkodzić zgodność innych integracji.
-- Jeśli błąd nadal występuje, dołącz pełny ślad wyjątku z logów po usunięciu danych wrażliwych oraz wersje HA i integracji. Sam komunikat HTTP 500 nie wskazuje jednoznacznie przyczyny.
+### Czujnik temperatury lub energii pokazuje stan nieznany
 
-### 5) Czujnik CWU niewidoczny przy tworzeniu termostatu
+Sterownik nie dołącza danego klucza (na przykład `DHWTempAct` przy odłączonym czujniku zasobnika albo `P033` bez licznika energii) do wysyłanej ramki `SkzpData`. Włącz logowanie `debug` i sprawdź w odebranym słowniku, jakie pola rzeczywiście przychodzą z pieca.
 
-Od **1.1.0** czujniki temperatury CO i CWU mają klasę urządzenia `temperature`, klasę stanu `measurement` i jednostkę °C. Rozwiązuje to brak metadanych opisany w [zgłoszeniu #3](https://github.com/drozdzszymon/lokalterm-ha/issues/3). Po aktualizacji zrestartuj HA i wybierz encję temperatury CWU, a nie encję jej nastawy.
+### Błąd 500 podczas dodawania integracji
 
----
+Błąd opisany w [zgłoszeniu #2](https://github.com/drozdzszymon/lokalterm-ha/issues/2) wynikał z dawnego wpisu narzucającego starszą wersję `pymodbus` w manifeście. Od wydania 1.1.0 LokalTerm nie instaluje żadnych zewnętrznych bibliotek z PyPI (`requirements: []`), bo korzysta wyłącznie z wbudowanego w Pythona serwera `asyncio`. Pobierz w HACS wydanie 1.1.1 lub nowsze i zrestartuj Home Assistanta, a przy instalacji ręcznej podmień cały katalog `custom_components/lokalterm` zamiast nadpisywać pojedyncze pliki. Nie wymuszaj ręcznie starszej wersji `pymodbus` wewnątrz kontenera Home Assistanta, bo uszkodzisz inne integracje korzystające z magistrali Modbus. Jeżeli mimo aktualizacji nadal wyskoczy błąd 500, wklej do zgłoszenia pełny ślad wyjątku z logów oraz wersje Home Assistanta i LokalTerm.
 
-## <img src="images/sections/translate.svg" width="22" align="center" alt="" /> Języki (PL/EN)
-- UI konfiguracji (Config Flow) posiada tłumaczenia PL/EN (`translations/`).
-- Nazwy encji i logi są domyślnie w języku polskim.
+### Brak czujnika CWU na liście w zewnętrznym termostacie
 
----
+Od wydania 1.1.0 czujniki temperatury wody CO i CWU mają przypisaną klasę urządzenia `temperature`, klasę stanu `measurement` oraz jednostkę `°C`, co zamknęło usterkę ze [zgłoszenia #3](https://github.com/drozdzszymon/lokalterm-ha/issues/3). Po aktualizacji i restarcie Home Assistanta wskaż w konfiguracji zewnętrznego termostatu pomiar z zasobnika pod encją `sensor.lokalterm_temp_wody_cwu`. Encja `number.lokalterm_cwu_temperatura_zadana` służy do zadawania progu i termostat jej nie przyjmie.
 
-## <img src="images/sections/issue.svg" width="22" align="center" alt="" /> Zgłaszanie błędów
-Tworząc Issue, dołącz:
-- wersję Home Assistanta,
-- wersję integracji,
-- fragment logów **bez danych wrażliwych**,
-- informację o sieci (VLAN/firewall) oraz port nasłuchu.
+## <img src="images/sections/translate.svg" width="22" align="center" alt="" /> Wersje językowe interfejsu
 
----
+Formularz dodawania integracji oraz okno zmiany opcji mają polskie i angielskie tłumaczenia w katalogu `translations`. Domyślne nazwy encji i wpisy w logach mają polskie brzmienie.
 
-## <img src="images/sections/handshake.svg" width="22" align="center" alt="" /> Rozwój projektu
-PR-y mile widziane. Prośba: nie zmieniaj logiki sterowania “w ciemno” — integracja jest wrażliwa na drobne zmiany. Najlepiej opisać zmianę, dodać logi i scenariusz testów.
+## <img src="images/sections/issue.svg" width="22" align="center" alt="" /> Jak zgłosić błąd
 
-### Testy regresji
+W nowym zgłoszeniu na GitHubie podaj wersję Home Assistanta, wersję integracji LokalTerm, sposób spięcia sieci między piecem a serwerem (na przykład osobny VLAN albo kontener Dockera) oraz wycinek logów z chwili błędu po usunięciu `vId`, `vPin` i prywatnych adresów.
 
-Uruchom `python -m pytest -q`. Testy korzystają z uproszczonego środowiska Home Assistanta zdefiniowanego w `tests/conftest.py`; sprawdzają także komunikację TCP na lokalnych gniazdach.
+## <img src="images/sections/handshake.svg" width="22" align="center" alt="" /> Testy regresji i rozwój kodu
 
-Automatyczna walidacja w GitHub Actions uruchamia testy regresji, HACS i hassfest oraz osobno import wszystkich platform i budowę formularzy na rzeczywistym pakiecie **Home Assistant 2026.4.3**. Nie zastępuje to testów sprzętowych ani pełnego uruchomienia integracji w HA.
+Przy modyfikacji warstwy sieciowej pilnuj jednoparametrowego formatu ramek `DataToSend` i odstępów między zapisami, ponieważ sterowniki SKZP są czułe na zmianę kolejności i gęstości komend. Do każdego pull requesta dołącz opis zachowania w logach oraz test pokrywający zmianę.
 
----
+Testy uruchomisz lokalnie poleceniem `python -m pytest -q`. Zestaw korzysta z lekkich atrap interfejsów Home Assistanta z pliku `tests/conftest.py` i otwiera prawdziwe gniazda TCP na pętli zwrotnej `127.0.0.1`. W GitHub Actions każde wypchnięcie kodu przechodzi testy regresji, walidację HACS i hassfest oraz osobne wczytanie wszystkich platform, encji i formularzy na pełnym pakiecie Home Assistant 2026.11.2. Zielony wynik w CI potwierdza zgodność z API Home Assistanta. Zachowanie samego sterownika trzeba osobno sprawdzić na żywym kotle.
 
 ## <img src="images/sections/scale.svg" width="22" align="center" alt="" /> Licencja
-Repozytorium jest udostępniane na licencji **MIT** — szczegóły znajdują się w pliku `LICENSE`.
 
-Jeśli tworzysz fork lub dystrybucję, zachowaj informację o licencji oraz prawa autorskie zgodnie z warunkami MIT.
+Projekt podlega licencji MIT z pliku [LICENSE](LICENSE). Przy publikacji własnej modyfikacji lub kopii zachowaj notę licencyjną i informację o prawach autorskich.

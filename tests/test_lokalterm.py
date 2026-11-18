@@ -476,12 +476,13 @@ async def test_all_entities_states_ha2026_features_and_edge_cases() -> None:
     co_num = by_uid["SKZP_99_co_temperatura_zadana"]
     cwu_sel = by_uid["SKZP_99_cwu_tryb_pracy"]
 
-    # HA 2025/2026 ClimateEntity TURN_ON / TURN_OFF contract + min/max/step
+    # HA 2025/2026 ClimateEntity TURN_ON / TURN_OFF + native temperature contract + min/max/step
     for clim in (co_clim, cwu_clim):
         assert ClimateEntityFeature.TURN_ON in clim._attr_supported_features
         assert ClimateEntityFeature.TURN_OFF in clim._attr_supported_features
         assert clim._enable_turn_on_off_backwards_compatibility is False
         assert clim._attr_target_temperature_step == 1.0
+        assert clim.native_temperature_unit == UnitOfTemperature.CELSIUS
     assert co_clim._attr_min_temp == 20.0
     assert cwu_clim._attr_min_temp == 30.0
 
@@ -516,6 +517,10 @@ async def test_all_entities_states_ha2026_features_and_edge_cases() -> None:
     )
     assert cwu_clim.preset_mode == PRESET_PRIORYTET
     assert cwu_clim.hvac_mode == HVACMode.HEAT
+    assert co_clim.native_current_temperature == 42.5
+    assert co_clim.native_target_temperature == 45.0
+    assert cwu_clim.native_current_temperature == 48.0
+    assert cwu_clim.native_target_temperature == 50.0
     assert temp_co_sensor.native_value == 42.5
     assert temp_cwu_sensor.native_value == 48.0
     assert energy_sensor.native_value == 152.35
@@ -687,7 +692,7 @@ def test_manifest_hassfest_key_order_and_translations_parity() -> None:
     assert manifest["domain"] == "lokalterm"
     assert manifest["iot_class"] == "local_push"
     assert manifest["requirements"] == []
-    assert manifest["version"] == "1.1.0"
+    assert manifest["version"] == "1.1.1"
 
     strings = json.loads((COMPONENT_DIR / "strings.json").read_text(encoding="utf-8"))
     pl = json.loads((COMPONENT_DIR / "translations" / "pl.json").read_text(encoding="utf-8"))

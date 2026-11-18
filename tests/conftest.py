@@ -425,7 +425,21 @@ def _install_homeassistant_shims() -> None:
         TURN_ON = 256
 
     class ClimateEntity:
-        pass
+        _attr_native_temperature_unit: str | None = None
+        _attr_native_current_temperature: float | None = None
+        _attr_native_target_temperature: float | None = None
+
+        @property
+        def native_temperature_unit(self) -> str | None:
+            return self._attr_native_temperature_unit
+
+        @property
+        def native_current_temperature(self) -> float | None:
+            return self._attr_native_current_temperature
+
+        @property
+        def native_target_temperature(self) -> float | None:
+            return self._attr_native_target_temperature
 
     ha_climate.ATTR_HVAC_MODE = "hvac_mode"  # type: ignore[attr-defined]
     ha_climate.HVACMode = HVACMode  # type: ignore[attr-defined]

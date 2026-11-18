@@ -3,58 +3,58 @@
     "step": {
       "user": {
         "title": "LokalTerm setup",
-        "description": "Add the LokalTerm integration and enter your local boiler connection details.",
+        "description": "Enter the local TCP connection settings for the boiler module.",
         "data": {
-          "name": "Name (shown in Home Assistant)",
+          "name": "Name in Home Assistant",
           "devid": "Device ID (vId)",
           "devpin": "Device PIN (vPin)",
           "listen_host": "Listen address",
           "listen_port": "Listen port"
         },
         "data_description": {
-          "name": "Friendly device name shown on dashboard cards and in the device registry.",
-          "devid": "Controller/module identifier required in command frames.",
-          "devpin": "Device PIN used to authorize local LAN control frames.",
-          "listen_host": "TCP server bind address in Home Assistant (default 0.0.0.0).",
-          "listen_port": "TCP port receiving boiler status frames (default 1088, range 1-65535)."
+          "name": "How the boiler appears on dashboard cards and in the device list.",
+          "devid": "The vId identifier from the internet module or boiler controller.",
+          "devpin": "The vPin code from the boiler panel that signs local LAN commands.",
+          "listen_host": "Local IP address for the TCP server in Home Assistant. Leave 0.0.0.0 to listen on all interfaces.",
+          "listen_port": "TCP port where the boiler module sends status frames. Default is 1088, from 1 to 65535."
         }
       }
     },
     "error": {
-      "empty_devid": "Enter a valid device ID (vId).",
-      "empty_devpin": "Enter a valid device PIN (vPin).",
-      "invalid_host": "Enter a valid IP address or hostname.",
-      "invalid_port": "Port must be an integer between 1 and 65535.",
-      "port_in_use": "This port is already used by another LokalTerm entry.",
-      "cannot_bind": "Cannot bind to the selected TCP address or port (already in use or insufficient permissions)."
+      "empty_devid": "Enter the device ID (vId).",
+      "empty_devpin": "Enter the device PIN (vPin).",
+      "invalid_host": "Enter a valid IP address or hostname without spaces.",
+      "invalid_port": "Enter a whole port number from 1 to 65535.",
+      "port_in_use": "Another LokalTerm entry is already listening on this port.",
+      "cannot_bind": "Home Assistant can't open this TCP address or port. Check if another service is already using it."
     },
     "abort": {
-      "already_configured": "This device is already configured."
+      "already_configured": "Home Assistant already has a device with this vId."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "LokalTerm connection settings",
-        "description": "Update TCP server settings or device PIN. Saving reloads the integration automatically.",
+        "description": "Change the device PIN, listen address, or TCP port. Saving reloads the integration right away.",
         "data": {
           "devpin": "Device PIN (vPin)",
           "listen_host": "Listen address",
           "listen_port": "Listen port"
         },
         "data_description": {
-          "devpin": "Device PIN used to authorize local LAN control frames.",
-          "listen_host": "TCP server bind address in Home Assistant (default 0.0.0.0).",
-          "listen_port": "TCP listen port (default 1088, range 1-65535)."
+          "devpin": "The vPin code from the boiler panel that signs local LAN commands.",
+          "listen_host": "Local IP address for the TCP server in Home Assistant. Leave 0.0.0.0 to listen on all interfaces.",
+          "listen_port": "TCP port where the boiler module sends status frames. Default is 1088, from 1 to 65535."
         }
       }
     },
     "error": {
-      "empty_devpin": "Enter a valid device PIN (vPin).",
-      "invalid_host": "Enter a valid IP address or hostname.",
-      "invalid_port": "Port must be an integer between 1 and 65535.",
-      "port_in_use": "This port is already used by another LokalTerm entry.",
-      "cannot_bind": "Cannot bind to the selected TCP address or port (already in use or insufficient permissions)."
+      "empty_devpin": "Enter the device PIN (vPin).",
+      "invalid_host": "Enter a valid IP address or hostname without spaces.",
+      "invalid_port": "Enter a whole port number from 1 to 65535.",
+      "port_in_use": "Another LokalTerm entry is already listening on this port.",
+      "cannot_bind": "Home Assistant can't open this TCP address or port. Check if another service is already using it."
     }
   }
 }
